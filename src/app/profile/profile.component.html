@@ -1,0 +1,273 @@
+<!--<div class="container" *ngIf="currentUser; else loggedOut">
+  <header class="jumbotron">
+    <h3>
+      <strong>{{ currentUser.username }}</strong> Profile
+    </h3>
+  </header>
+  <p>
+    <strong>Token:</strong>
+    {{ currentUser.accessToken.substring(0, 20) }} ...
+    {{ currentUser.accessToken.substr(currentUser.accessToken.length - 20) }}
+  </p>
+  <p>
+    <strong>Email:</strong>
+    {{ currentUser.email }}
+  </p>
+  <strong>Roles:</strong>
+  <ul>
+    <li *ngFor="let role of currentUser.roles">
+      {{ role }}
+    </li>
+  </ul>
+</div>
+
+<ng-template #loggedOut>
+  Please login.
+</ng-template>-->
+<mat-tab-group mat-align-tabs="start">
+  <mat-tab label="Your companies">
+<!--      <div *ngFor="let company of profileContent.companies">-->
+  <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+  </mat-form-field>
+
+<!--<div class="mat-elevation-z8">-->
+  <table mat-table [dataSource]="profileContent.companies" class="mat-elevation-z8" matSort>
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Progress Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="star">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <a [routerLink]="['/company', {'id': element.id}]" mat-menu-item>
+            <mat-icon>visibility</mat-icon>
+            <span>Show</span>
+          </a>
+          <button mat-menu-item>
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="delete(element.id)">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+       </td>
+    </ng-container>
+
+<!--
+     Name Column
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+    </ng-container>
+
+     Color Column
+    <ng-container matColumnDef="color">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Color </th>
+      <td mat-cell *matCellDef="let row" [style.color]="row.color"> {{row.color}} </td>
+    </ng-container>
+-->
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="2">No data matching the filter "{{input.value}}"</td>
+      </tr>
+
+  </table>
+
+
+<!--</div>-->
+<!--      </div>-->
+  </mat-tab>
+  <mat-tab label="Your bonuses">
+      <table mat-table [dataSource]="profileContent.bonuses" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="cost">
+        <th mat-header-cell *matHeaderCellDef> Cost </th>
+        <td mat-cell *matCellDef="let element"> ${{element.cost}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedBonusColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedBonusColumns;"></tr>
+    </table>
+
+
+  </mat-tab>
+
+  <mat-tab label="Create new company">
+      Add company
+      <mat-vertical-stepper [linear]="false" #stepper>
+  <mat-step [stepControl]="nameFormGroup">
+    <form [formGroup]="nameFormGroup">
+      <ng-template matStepLabel>Name of company</ng-template>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="nameCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="descriptionFormGroup">
+    <form [formGroup]="descriptionFormGroup">
+      <ng-template matStepLabel>Short description</ng-template>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="descriptionCtrl"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+<!--
+  <mat-step [stepControl]="bonusFormGroup">
+    <form [formGroup]="bonusFormGroup">
+      <ng-template matStepLabel>Add bonuses</ng-template>
+      <mat-form-field>
+        <mat-label>Bonus name</mat-label>
+        <input matInput formControlName="bonusNameCtrl"
+               required>
+
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Bonus price</mat-label>
+        <input matInput formControlName="bonusPriceCtrl"
+               required>
+
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+-->
+  <mat-step [stepControl]="subjectFormGroup">
+    <form [formGroup]="subjectFormGroup">
+      <ng-template matStepLabel>Subject</ng-template>
+      <mat-form-field>
+        <mat-label>Subject</mat-label>
+        <input matInput formControlName="subjectCtrl"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="imagesFormGroup">
+    <form method="post" enctype='multipart/form-data'>
+      <ng-template matStepLabel>Add images</ng-template>
+<!--      <mat-form-field>-->
+        <mat-label>Images</mat-label>
+<!--
+        <input matInput formControlName="imagesCtrl"
+               required>
+-->
+        <div class="custom-file">
+        <input  type="file" class="custom-file-input" id="image" #imageInputFile
+        (change)="onFileChange($event)" accept="image/png, image/jpeg, image/gif" >
+        <label class="custom-file-label" for="image">Choose an image</label>
+        </div>
+        <div *ngIf="image" class="mt-2">
+        <div>
+            <img class="image-thumbnail" style="max-width: 100px" [src]="imageMin">
+        </div>
+        </div>
+<!--      </mat-form-field>-->
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="deadlineFormGroup">
+    <form [formGroup]="deadlineFormGroup">
+      <ng-template matStepLabel>Deadline</ng-template>
+      <mat-form-field>
+        <mat-label>Date</mat-label>
+        <input matInput formControlName="deadlineCtrl" type="date" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="videoFormGroup">
+    <form [formGroup]="videoFormGroup">
+      <ng-template matStepLabel>Video</ng-template>
+      <mat-form-field>
+        <mat-label>Video link</mat-label>
+        <input matInput formControlName="videoCtrl"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="moneyFormGroup">
+    <form [formGroup]="moneyFormGroup">
+      <ng-template matStepLabel>Target amount of money</ng-template>
+      <mat-form-field>
+        <mat-label>Amount</mat-label>
+        <input matInput formControlName="moneyCtrl"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="onUpload()">Apply</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>
+
+  </mat-tab>
+</mat-tab-group>

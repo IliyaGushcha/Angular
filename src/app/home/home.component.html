@@ -1,0 +1,21 @@
+<!--<div class="container">
+  <header class="jumbotron">
+    <p *ngFor="let name of content">{{ name.name }}</p>
+  </header>
+</div>-->
+<div class="container mb-2 mt-2" >
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" *ngFor="let company of companies">
+                <div class="card h-100">
+                   <div  *ngFor="let image of company.images; let i = index">
+                    <img *ngIf="!index" [src]="image.imageUrl" class="card-img-top" alt="...">
+                    </div>
+                       <div class="card-body">
+                        <h5 class="card-title">{{ company.name }}</h5>
+                        <p class="card-text">{{company.description}}</p>
+                        <a [routerLink]="['/company', {'id': company.id}]" >Learn more</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

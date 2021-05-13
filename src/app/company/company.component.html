@@ -1,0 +1,110 @@
+
+<div *ngIf="company" class="container">
+ <h5 class="d-flex justify-content-center mb-3 mt-3">{{company.name}}</h5>
+ <div class="d-flex justify-content-center mb-3 mt-3">{{company.description}}</div>
+  <div class="row mb-3">
+    <div class="col-sm-8">
+        <iframe class="d-flex" [src]="company.video | safe: 'resourceUrl'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="col-sm-4">
+       <div class="mb-3">
+               <mat-progress-bar class="mb-2" mode="determinate" [value]="progress(company.currentAmount, company.amount)"></mat-progress-bar>
+               ${{company.currentAmount}} collected of ${{company.amount}}
+       </div>
+        <div class="row"><h6>Deadline: {{company.deadline | date:'dd-MM-yyyy'}}</h6></div>
+        <div class="row mt-2" *ngFor="let bonus of company.bonuses">Bonus: You will get a {{bonus.name}} for transfer {{bonus.cost}}$
+        <button mat-raised-button class="mt-1" (click)="support(bonus.id)">Support</button>
+        </div>
+
+        <div *ngIf="isLoggedIn">
+        <div class="mt-4" *ngFor="let userCompany of userInfo.companies">
+          <div *ngIf="userCompany.id==company.id">
+            <form [formGroup]="bonusFormGroup" class="example-form">
+          <mat-form-field>
+            <mat-label>Bonus name</mat-label>
+                <input matInput formControlName="bonusNameCtrl">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Bonus price</mat-label>
+                <input matInput formControlName="bonusPriceCtrl">
+              </mat-form-field>
+        </form>
+      <button mat-button (click)="addBonus(company.id)">Add bonus</button>
+            </div>
+        </div>
+        </div>
+    </div>
+  </div>
+
+  <mat-tab-group mat-align-tabs="start">
+  <mat-tab label="News">
+  <div class="col p-3">
+     <div *ngIf="!(company.newsList.length === 0)">
+      <div *ngFor="let news of company.newsList; let i = index">
+<!--          <div *ngFor="let news of userCompany.newsList; let image of userCompany">-->
+
+
+        <mat-card class="example-card mb-1">
+            <mat-card-title>{{news.name}} - new event in our city!
+            </mat-card-title>
+          <mat-card-content >
+            <p>
+              {{news.description}}
+            </p>
+          </mat-card-content>
+            <div *ngIf="!i" class="d-flex justify-content-center mt-4">
+              <img mat-card-image class="img-fluid" src={{company.images[0].imageUrl}}>
+             </div>
+         </mat-card>
+        </div>
+        </div>
+      <div *ngIf="company.newsList.length === 0">
+          <h5>No news yet.</h5>
+      </div>
+<!--      </div> List of news-->
+   <div *ngIf="isLoggedIn">
+    <div class="mt-4" *ngFor="let userCompany of userInfo.companies">
+      <div *ngIf="userCompany.id==company.id">
+        <form [formGroup]="newsFormGroup" class="example-form">
+          <mat-form-field class="example-full-width">
+            <mat-label>Title</mat-label>
+                <input matInput formControlName="nameCtrl">
+              </mat-form-field>
+
+              <mat-form-field class="example-full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="descriptionCtrl"></textarea>
+              </mat-form-field>
+        </form>
+      <button mat-button (click)="uploadNews(company.id)">Add news</button>
+      </div>
+    </div>
+    </div>
+  </div>
+  </mat-tab>
+  <mat-tab *ngIf="isLoggedIn" label="Comments">
+      <div  class="col-sm-8">
+      <div *ngFor="let comment of comments">
+<!--        <div *ngFor="let text of comment.value | keyvalue">-->
+         <mat-card>
+             <mat-card-title>
+<!--                <div *ngFor="let user of comment.user">{{user.username}}</div>-->
+             {{comment.username}}
+             </mat-card-title>
+             <mat-card-content>{{comment.text}}</mat-card-content>
+         </mat-card>
+<!--          </div>-->
+<!--          {{comment.text}}-->
+      </div>
+      <form [formGroup]="commentFormGroup" class="example-form mt-2">
+          <mat-form-field class="example-full-width">
+            <mat-label>Comment</mat-label>
+                <input matInput formControlName="commentCtrl" placeholder="Write a comment...">
+              </mat-form-field>
+              <button mat-button (click)="uploadComment()">Send comment</button>
+        </form>
+  </div>
+  </mat-tab>
+</mat-tab-group>
+</div>
