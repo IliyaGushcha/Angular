@@ -8,7 +8,7 @@ import { News } from '../models/news';
 
 
 
-const API_URL = 'http://localhost:8081/api/test/';
+const API_URL = 'https://my-crowdfunding-project.herokuapp.com/api/test/';
 
 @Injectable({
   providedIn: 'root'

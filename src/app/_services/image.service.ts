@@ -8,7 +8,7 @@ import { Image } from '../models/image';
 })
 export class ImageService {
 
-  imageURL = 'http://localhost:8081/api/test/';/*!!!!!*/
+  imageURL = 'https://my-crowdfunding-project.herokuapp.com/api/test/';
 
   constructor(private httpClient: HttpClient) { }
 
