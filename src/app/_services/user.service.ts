@@ -8,7 +8,7 @@ import { News } from '../models/news';
 
 
 
-const API_URL = 'https://my-crowdfunding-project.herokuapp.com/api/test/';
+const API_URL = 'http://localhost:8081/api/test/';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,11 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getPublicContent(): Observable<any> {
-    return this.http.get(API_URL + 'all', { responseType: 'text' });
+    return this.http.get(API_URL + 'all');
+  }
+
+  getAllUsers(): Observable<any> {
+      return this.http.get(API_URL + 'users');
   }
 
   getUserProfle(id: number): Observable<any> {
@@ -38,6 +42,10 @@ export class UserService {
 
   deleteCompany(id: number): Observable<any> {
       return this.http.delete<any>(API_URL + 'company/' + id + '/delete');
+  }
+
+  deleteUser(id: number): Observable<any> {
+      return this.http.delete<any>(API_URL + 'user/' + id + '/delete');
   }
 
   public addCompany(id: number, company: Company, image:File): Observable<any> {
@@ -75,6 +83,12 @@ export class UserService {
 //      formData.append('companyId', JSON.stringify(companyId));
 //      formData.append('bonusId', JSON.stringify(bonusId));
       return this.http.post<any>(API_URL + 'company/support', {companyId, userId, bonusId});
+  }
+
+  public changeRole(role: string, userId: number): Observable<any> {
+      const formData = new FormData();
+      formData.append('role', role);
+      return this.http.post<any>(API_URL + 'user/'+userId+'/role/change', formData);
   }
 }
 

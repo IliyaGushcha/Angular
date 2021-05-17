@@ -9,9 +9,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import {MatIconModule} from '@angular/material/icon';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Bonus} from '../models/bonus';
-import {ProgressBarMode} from '@angular/material/progress-bar';
+//import {ProgressBarMode} from '@angular/material/progress-bar';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-company',
@@ -30,8 +32,9 @@ export class CompanyComponent implements OnInit {
     newsFormGroup: FormGroup;
     commentFormGroup: FormGroup;
     bonusFormGroup: FormGroup;
-    comments: any;
+    comments: Observable<any>;
     temp: string;
+    value: number;
 
     constructor(private tokenStorageService:
                  TokenStorageService, private userService: UserService, private route: ActivatedRoute, private formBuilder: FormBuilder, private news: News, private bonus: Bonus) {}
@@ -46,9 +49,10 @@ export class CompanyComponent implements OnInit {
             (data => { this.userInfo = data; } );
         }
 
+        this.value = 1000;
 
+        this.comments = this.userService.getComments(this.id);
 
-        this.userService.getComments(this.id).subscribe(data => { this.comments = data; });
         this.userService.getCompanyContent(this.id).subscribe(
             data => {
                 this.company = JSON.parse(data);
@@ -91,7 +95,6 @@ export class CompanyComponent implements OnInit {
 
     uploadComment(): void {
         this.userService.addComment(this.id, this.userId, this.commentFormGroup.controls['commentCtrl'].value).subscribe();
-        this.ngOnInit();
     }
 
     addBonus(id: number): void {
@@ -109,4 +112,9 @@ export class CompanyComponent implements OnInit {
         return (currentAmount/amount)*100;
     }
 
+    isAdmin() {
+        if(this.isLoggedIn) {
+        return this.tokenStorageService.getUser().roles.includes('ROLE_ADMIN');
+        } else return this.isLoggedIn;
+    }
 }

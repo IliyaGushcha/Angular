@@ -16,12 +16,12 @@
         <button mat-raised-button class="mt-1" (click)="support(bonus.id)">Support</button>
         </div>
 
-        <div *ngIf="isLoggedIn">
+        <div *ngIf="!isAdmin()">
         <div class="mt-4" *ngFor="let userCompany of userInfo.companies">
           <div *ngIf="userCompany.id==company.id">
             <form [formGroup]="bonusFormGroup" class="example-form">
-          <mat-form-field>
-            <mat-label>Bonus name</mat-label>
+              <mat-form-field>
+                <mat-label>Bonus name</mat-label>
                 <input matInput formControlName="bonusNameCtrl">
               </mat-form-field>
 
@@ -29,11 +29,25 @@
                 <mat-label>Bonus price</mat-label>
                 <input matInput formControlName="bonusPriceCtrl">
               </mat-form-field>
-        </form>
-      <button mat-button (click)="addBonus(company.id)">Add bonus</button>
+            </form>
+              <button mat-button (click)="addBonus(company.id)">Add bonus</button>
             </div>
         </div>
-        </div>
+       </div>
+       <div *ngIf="isAdmin()">
+            <form [formGroup]="bonusFormGroup" class="example-form">
+              <mat-form-field>
+                <mat-label>Bonus name</mat-label>
+                <input matInput formControlName="bonusNameCtrl">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Bonus price</mat-label>
+                <input matInput formControlName="bonusPriceCtrl">
+              </mat-form-field>
+            </form>
+              <button mat-button (click)="addBonus(company.id)">Add bonus</button>
+       </div>
     </div>
   </div>
 
@@ -63,7 +77,7 @@
           <h5>No news yet.</h5>
       </div>
 <!--      </div> List of news-->
-   <div *ngIf="isLoggedIn">
+   <div *ngIf="!isAdmin()">
     <div class="mt-4" *ngFor="let userCompany of userInfo.companies">
       <div *ngIf="userCompany.id==company.id">
         <form [formGroup]="newsFormGroup" class="example-form">
@@ -81,17 +95,33 @@
       </div>
     </div>
     </div>
+
+    <div *ngIf="isAdmin()">
+        <form [formGroup]="newsFormGroup" class="example-form">
+              <mat-form-field class="example-full-width">
+             <mat-label>Title</mat-label>
+                <input matInput formControlName="nameCtrl">
+              </mat-form-field>
+
+              <mat-form-field class="example-full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="descriptionCtrl"></textarea>
+              </mat-form-field>
+        </form>
+      <button mat-button (click)="uploadNews(company.id)">Add news</button>
+   </div>
+
   </div>
   </mat-tab>
   <mat-tab *ngIf="isLoggedIn" label="Comments">
       <div  class="col-sm-8">
-      <div *ngFor="let comment of comments">
+      <div *ngFor="let comment of comments | async">
 <!--        <div *ngFor="let text of comment.value | keyvalue">-->
          <mat-card>
              <mat-card-title>
 <!--                <div *ngFor="let user of comment.user">{{user.username}}</div>-->
              {{comment.username}}
-             </mat-card-title>
+                </mat-card-title>
              <mat-card-content>{{comment.text}}</mat-card-content>
          </mat-card>
 <!--          </div>-->

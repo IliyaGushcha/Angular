@@ -34,23 +34,37 @@ export class ProfileComponent implements OnInit {
   moneyFormGroup: FormGroup;
   imagesFormGroup: FormGroup;
   deadlineFormGroup: FormGroup;
-  displayedColumns: string[] = ['id', 'name', 'star'];
+  displayedColumns: string[] = ['id', 'name', 'buttons'];
   displayedBonusColumns: string[] = ['id', 'name', 'cost'];
+  //displayedUsersCoumns: string[] = ['id', 'username', 'b']
   currentUser: any;
+  isAdmin: any;
   image: File;
   imageMin: File;
-
-
   profileContent: any = [];
+  allCompanies: any;
+  users: any;
+
   constructor(private token: TokenStorageService, private userService: UserService, private _formBuilder: FormBuilder, private bonus: Bonus, private newCompany: Company) { }
 
   @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit() {
     this.currentUser = this.token.getUser().id;
+      this.isAdmin = this.token.getUser().roles.includes('ROLE_ADMIN');
+
+    this.userService.getAllUsers().subscribe(data => {
+        this.users = data;
+    })
+
     this.userService.getUserProfle(this.currentUser).subscribe(data => {
         this.profileContent = data;
     });
+
+      this.userService.getPublicContent().subscribe(
+      data => {
+          this.allCompanies = data;
+      });
 
       this.nameFormGroup = this._formBuilder.group({
       nameCtrl: ['', Validators.required]
@@ -118,7 +132,25 @@ export class ProfileComponent implements OnInit {
     this.profileContent.filter = filterValue.trim().toLowerCase();
   }
 
-  delete(id: number): void {
+  getRole(role: any) {
+      return role=='ROLE_ADMIN'?'USER':'ADMIN';
+  }
+
+    changeRole(role: any, userId: number) {
+        let setRole;
+        if( role =='ROLE_ADMIN') {
+            setRole = 'ROLE_USER';
+        } else {
+            setRole = 'ROLE_ADMIN';
+        }
+        this.userService.changeRole(setRole, userId).subscribe();
+    }
+
+  deleteCompany(id: number): void {
       this.userService.deleteCompany(id).subscribe();
+  }
+
+  deleteUser(id: number): void {
+      this.userService.deleteUser(id).subscribe();
   }
 }

@@ -16,10 +16,10 @@ export class HomeComponent implements OnInit {
     this.userService.getPublicContent().subscribe(
       data => {
         //this.content = data;
-          this.companies = JSON.parse(data);
+          this.companies = data;
       },
       err => {
-        this.companies = JSON.parse(err.error).message;
+        this.companies = err.error.message;
       }
     );
   }
